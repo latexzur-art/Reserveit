@@ -1,0 +1,165 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+e2e/.auth/
+/playwright-report/
+/test-results/
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# credentials (NEVER commit)
+CREDENTIALS.md
+credentials.txt
+.env.local
+.env*.local
+.env
+
+# Supabase
+.supabase/
+supabase/.temp/
+supabase/.branches/
+
+# Claude Code
+.claude/
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+.aider*
+
+# Local dev artifacts
+auth_users.json
+brain/
+scratch/
+.playwright-mcp/
+scripts/out.txt
+
+# local build logs
+build-output*.txt
+build-error.txt
+
+# Local debug & DB probes
+_db_dump.json
+_tmp_query.js
+test-db-connection.js
+home.png
+
+# Local tooling output
+graphify-out/
+graphify_help.txt
+.agents/
+skills-lock.json
+.impeccable/critique/
+
+# pnpm (project is on npm; pnpm files break Vercel auto-detection)
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
+# git worktrees (superpowers sdd)
+.worktrees/
+.env*
+
+# local tool caches / scratch (not project source)
+.mimocode/
+temp-screenshot.png
+
+# Postgres migration (feature/postgres-migration)
+# Ignore GENERATED DB dumps only (real user data + password hashes).
+# Authored scripts (04_decouple / 05_restore / 06_app_role / 07_auth_shims) stay COMMITTED.
+scripts/migration/dumps/
+# Keep the committed env template reproducible (overrides the broad `.env*` rule above).
+!.env.example
+
+# Personal AI agent configs — keep global (~/.claude/, ~/.mcp.json), not project-level
+CLAUDE.md
+.mcp.json
+.clinerules
+.antigravitycli/
+
+# AI-generated planning docs (not project source)
+Reservationpipeline.md
+DATABASE_MIGRATION_MASTER_PLAN.md
+DATABASE_REMEDIATION_PLAN.md
+TEST_VERIFICATION.md
+VERIFICATION.md
+QUICKSTART_MIGRATIONS.md
+CODEBASE_MAP.md
+PRODUCT.md
+DEVELOPMENT.md
+ENVIRONMENTS.md
+impeccable-commands.md
+
+# One-off fix/debug scripts (not project source)
+auto_fix_eslint.py
+fix_imports.py
+fix_missing.py
+fix_program_dash.py
+fix_ts.js
+get_matches.py
+get_matches2.py
+replace_loaders.py
+replace_remaining.py
+replace_script.py
+merge_cards.mjs
+rewrite_room_card.mjs
+update_grid.js
+update_script.js
+patch_maintenance.js
+
+# Scratch queries and debug dumps
+scratch_query*
+_db_dump.json
+_tmp_query.js
+test-calendar.js
+test-db-connection.js
+test-middleware.js
+test.js
+eslint_output*.json
+ts_output.txt
+
+# Old backups and debug screenshots
+old_*.tsx
+screenshot*.png
+unauthorized-state.png
+
+# Personal plans, specs, and design docs
+plans/
+mdfiles/
+docs/superpowers/
+DESIGN.md
+scripts/VERIFICATION_GUIDE.md
+reserveit@*
+
+# Impeccable surfaces and critique outputs
+.impeccable/
+.antigravityignore
+docs/DATABASE_MIGRATIONS_GUIDE.md

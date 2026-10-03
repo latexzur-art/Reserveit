@@ -1,0 +1,123 @@
+name: Deploy — Production
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: true
+
+jobs:
+  # ── Gate: run the same checks PRs get, so direct pushes to main can't skip CI ──
+  ci:
+    name: Type Check, Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate next-env.d.ts
+        run: |
+          cat > next-env.d.ts <<'EOF'
+          /// <reference types="next" />
+          /// <reference types="next/image-types/global" />
+
+          // NOTE: This file should not be edited
+          // see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+          EOF
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm run test
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: dummy-anon-key
+
+  migrate-and-deploy:
+    name: Migrate Prod DB → Deploy to Vercel Production
+    runs-on: ubuntu-latest
+    environment: production
+    needs: ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 1. Migrate prod DB first (schema before code) ──────────────────────
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Run migrations on Prod DB
+        run: |
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          supabase db push --include-all
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      # ── 2. Deploy to Vercel production ─────────────────────────────────────
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel env (production)
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Build project
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          NODE_OPTIONS: "--max-old-space-size=4096"
+
+      - name: Deploy to Vercel production
+        run: vercel deploy --prebuilt --prod --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          NODE_OPTIONS: "--max-old-space-size=4096"
+
+      # ── 3. Post-deploy smoke test ──────────────────────────────────────────
+      # Hits the cron endpoints with CRON_SECRET; -f makes curl fail on non-2xx.
+      # Catches "deploy succeeded but route 500s" regressions like the 4-week
+      # silent booking-reminders outage (commit 23574e3 → 9b11bf5).
+      - name: Smoke test cron endpoints
+        env:
+          APP_URL: https://reserve-it-six.vercel.app
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -e
+          for path in booking-reminders oversight-expiry reschedule-offer-expiry; do
+            echo "→ $path"
+            curl -sfS "$APP_URL/api/cron/$path" -H "Authorization: Bearer $CRON_SECRET" -o /dev/null -w "  status: %{http_code}\n"
+          done

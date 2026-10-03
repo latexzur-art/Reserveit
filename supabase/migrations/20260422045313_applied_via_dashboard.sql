@@ -1,0 +1,1 @@
+-- Applied directly on Supabase dashboard; local placeholder for CLI tracking.

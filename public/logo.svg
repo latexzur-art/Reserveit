@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <!-- Building Outline merged with Calendar -->
+  <path d="M10 95 L10 35 L50 15 L90 35 L90 95 Z" fill="#003B73" />
+  <!-- Calendar Rings -->
+  <rect x="25" y="5" width="10" height="20" rx="5" fill="#FFC300" />
+  <rect x="65" y="5" width="10" height="20" rx="5" fill="#FFC300" />
+  
+  <!-- Calendar/Window Grids -->
+  <rect x="25" y="45" width="12" height="12" fill="#FFC300" />
+  <rect x="44" y="45" width="12" height="12" fill="#FFC300" />
+  <rect x="63" y="45" width="12" height="12" fill="#FFC300" />
+
+  <rect x="25" y="62" width="12" height="12" fill="#FFC300" />
+  <rect x="63" y="62" width="12" height="12" fill="#FFC300" />
+
+  <!-- Door -->
+  <rect x="42" y="72" width="16" height="23" fill="#FFC300" />
+</svg>

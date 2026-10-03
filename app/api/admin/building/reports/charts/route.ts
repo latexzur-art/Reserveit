@@ -1,0 +1,17 @@
+import { NextResponse, type NextRequest } from 'next/server'
+import { requireBuildingAdminStrict } from '@/lib/auth/guards'
+import { BuildingReportsService } from '@/backend/admin/building'
+import { getErrorMessage } from '@/lib/errors'
+
+export async function GET(request: NextRequest) {
+  const { error: authError } = await requireBuildingAdminStrict()
+  if (authError) return authError
+
+  try {
+    const chartData = await BuildingReportsService.getChartData()
+    return NextResponse.json({ chartData })
+  } catch (err) {
+    console.error('[API] GET /admin/building/reports/charts error:', err)
+    return NextResponse.json({ error: getErrorMessage(err) }, { status: 500 })
+  }
+}

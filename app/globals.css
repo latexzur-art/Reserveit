@@ -1,0 +1,407 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  /* ── RAW BRAND PALETTE ── */
+  --sti-blue: #0072bc;
+  --sti-blue-light: #e0f2fe;
+  --sti-blue-dark: #005a96;
+  --sti-navy: #050d36;
+  --sti-navy-light: #1e293b;
+  --sti-navy-lighter: #334155;
+  --sti-yellow: #fff200;
+  --sti-yellow-muted: #e8b800;
+  --gold: #f5c518;
+  --gold-foreground: var(--sti-navy);
+  --slate-text: #94a3b8;
+  --slate-light: #cbd5e1;
+
+  /* ── ACCENT BRAND ── */
+  --accent-light: #FACC15;
+  --accent-dark: #0072bc;
+  --accent-brand: var(--accent-light);
+
+  /* ── SEMANTIC TOKENS ── */
+  --background: #f8fafc;
+  --foreground: var(--sti-navy);
+  --card: #ffffff;
+  --card-foreground: var(--sti-navy);
+  --popover: #ffffff;
+  --popover-foreground: var(--sti-navy);
+  --primary: var(--sti-navy);
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: var(--sti-navy);
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  --accent: #f0f9ff;
+  --accent-foreground: var(--sti-blue);
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: var(--sti-blue);
+  --radius: 0.75rem;
+  --font-scale: 1;
+
+  /* ── SIDEBAR ── */
+  --sidebar-background: var(--sti-navy);
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: var(--sti-blue);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--sti-navy-light);
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: var(--sti-navy-light);
+  --sidebar-ring: var(--sti-blue);
+
+  /* ── ACADEMIC HEAD ── */
+  --ah-sti-blue: #012C40;
+  --ah-sti-yellow: #F5CE5B;
+  --ah-sti-cyan: #1CA5B8;
+  --ah-neutral-gray: #F8F9FA;
+}
+
+.dark {
+  color-scheme: dark;
+  /* ── ACCENT BRAND (STI Accent Gold) ── */
+  --accent-brand: var(--accent-light);
+
+  /* ── SEMANTIC TOKENS ── */
+  --background: #0B0E11;
+  --foreground: #f8fafc;
+  --card: #0D0F12;
+  --card-foreground: #f8fafc;
+  --popover: #0D0F12;
+  --popover-foreground: #f8fafc;
+  --primary: #38bdf8;
+  --primary-foreground: #0B0E11;
+  --secondary: #161A1F;
+  --secondary-foreground: #f8fafc;
+  --muted: #161A1F;
+  --muted-foreground: #94a3b8;
+  --accent: #1A1E24;
+  --accent-foreground: #f8fafc;
+  --destructive: #991b1b;
+  --destructive-foreground: #fef2f2;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: #334155;
+  --ring: #38bdf8;
+
+  /* ── SIDEBAR ── */
+  --sidebar-background: #0D0F12;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #38bdf8;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1A1E24;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #38bdf8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* ── FONTS ── */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
+  /* ── RESPONSIVE TYPOGRAPHY THEME OVERRIDES ── */
+  --font-size-xxs: 0.625rem;
+  --font-size-tiny: 0.6875rem;
+  --font-size-micro: 0.5625rem;
+  --font-size-nano: 0.5rem;
+  --font-size-pico: 0.4375rem;
+
+  /* ── EXPOSED TO TAILWIND ── */
+  --color-accent-brand: var(--accent-brand);
+  --color-accent-light: var(--accent-light);
+  --color-accent-dark: var(--accent-dark);
+
+  --color-sti-blue: var(--sti-blue);
+  --color-sti-blue-light: var(--sti-blue-light);
+  --color-sti-blue-dark: var(--sti-blue-dark);
+  --color-sti-navy: var(--sti-navy);
+  --color-sti-navy-light: var(--sti-navy-light);
+  --color-sti-navy-lighter: var(--sti-navy-lighter);
+  --color-sti-yellow: var(--sti-yellow);
+  --color-sti-yellow-muted: var(--sti-yellow-muted);
+
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-slate-text: var(--slate-text);
+  --color-slate-light: var(--slate-light);
+
+  --color-sidebar-background: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Academic Head Theme Tokens */
+  --color-ah-sti-blue: var(--ah-sti-blue);
+  --color-ah-sti-yellow: var(--ah-sti-yellow);
+  --color-ah-sti-cyan: var(--ah-sti-cyan);
+  --color-ah-neutral-gray: var(--ah-neutral-gray);
+
+  /* Animations */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0
+    }
+
+    to {
+      height: var(--radix-accordion-content-height)
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height)
+    }
+
+    to {
+      height: 0
+    }
+  }
+}
+
+/* Base Styles */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Modern Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40 transition-colors;
+  }
+
+  /* Thin scrollbar variant for compact dropdown/list containers */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40 transition-colors;
+  }
+
+  /* Dropdown option visibility fix — ensures readable text on all themes */
+  select option {
+    background-color: #ffffff;
+    color: #1e293b;
+  }
+
+  .dark select option {
+    background-color: #1e293b;
+    color: #f1f5f9;
+  }
+
+  select, input, textarea {
+    color-scheme: light;
+  }
+
+  .dark select, .dark input, .dark textarea {
+    color-scheme: dark;
+  }
+}
+
+/* Utilities */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glass {
+    @apply bg-white/80 backdrop-blur-md border-b border-white/20;
+  }
+
+  .glass-dark {
+    @apply bg-slate-900/80 backdrop-blur-md border-b border-white/5;
+  }
+}
+
+/* Landing Page Custom Utilities */
+.grid-bg-dark {
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.95)),
+    radial-gradient(circle at 20% 50%, rgba(245, 197, 24, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(30, 41, 59, 0.4) 0%, transparent 50%);
+}
+
+.section-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.section-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #f5c518;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-4px);
+}
+
+.glass-badge {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  background: #f5c518;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.no-underline {
+  text-decoration: none !important;
+}
+
+@media (min-width: 768px) {
+  .section-title {
+    font-size: 3rem;
+  }
+  .section-container {
+    padding: 0 2rem;
+  }
+}
+
+/* ── MULTI-LEVEL TEXT SIZING & ENLARGEMENT SYSTEM ── */
+:root {
+  --font-scale: 1;
+}
+
+.text-size-compact { --font-scale: 0.9; }
+.text-size-normal { --font-scale: 1; }
+.text-size-medium, .text-enlarged { --font-scale: 1.15; }
+.text-size-large { --font-scale: 1.3; }
+.text-size-xlarge { --font-scale: 1.45; }
+
+.text-\[7px\] { font-size: calc(7px * var(--font-scale, 1)) !important; }
+.text-\[8px\] { font-size: calc(8px * var(--font-scale, 1)) !important; }
+.text-\[9px\] { font-size: calc(9px * var(--font-scale, 1)) !important; }
+.text-\[10px\] { font-size: calc(10px * var(--font-scale, 1)) !important; }
+.text-\[11px\] { font-size: calc(11px * var(--font-scale, 1)) !important; }
+.text-\[12px\] { font-size: calc(12px * var(--font-scale, 1)) !important; }
+.text-\[13px\] { font-size: calc(13px * var(--font-scale, 1)) !important; }
+.text-\[14px\] { font-size: calc(14px * var(--font-scale, 1)) !important; }
+.text-\[15px\] { font-size: calc(15px * var(--font-scale, 1)) !important; }
+.text-\[16px\] { font-size: calc(16px * var(--font-scale, 1)) !important; }
+.text-\[17px\] { font-size: calc(17px * var(--font-scale, 1)) !important; }
+.text-\[18px\] { font-size: calc(18px * var(--font-scale, 1)) !important; }
+.text-\[20px\] { font-size: calc(20px * var(--font-scale, 1)) !important; }
+.text-\[22px\] { font-size: calc(22px * var(--font-scale, 1)) !important; }
+.text-\[24px\] { font-size: calc(24px * var(--font-scale, 1)) !important; }
+.text-\[28px\] { font-size: calc(28px * var(--font-scale, 1)) !important; }
+.text-\[30px\] { font-size: calc(30px * var(--font-scale, 1)) !important; }
+.text-\[32px\] { font-size: calc(32px * var(--font-scale, 1)) !important; }
+.text-\[36px\] { font-size: calc(36px * var(--font-scale, 1)) !important; }
+.text-\[40px\] { font-size: calc(40px * var(--font-scale, 1)) !important; }
+.text-\[48px\] { font-size: calc(48px * var(--font-scale, 1)) !important; }
+.text-enlarged .text-nano { font-size: calc(0.5rem * var(--font-scale, 1)) !important; }
+
+.recharts-text { font-size: calc(10px * var(--font-scale, 1)) !important; }
+.recharts-legend-item-text { font-size: calc(10px * var(--font-scale, 1)) !important; }
+.recharts-tooltip-wrapper * { font-size: calc(10px * var(--font-scale, 1)) !important; }
+
+.text-enlarged h1 {
+  font-size: 1.75rem !important;
+  line-height: 1.1 !important;
+}
+.text-enlarged .dashboard-header-subtitle {
+  font-size: 0.7rem !important;
+  letter-spacing: 0.1em !important;
+}
+
+/* ── STATS CARDS ENLARGED TEXT RESPONSIVENESS ── */
+.text-enlarged .stats-card { padding: 1.25rem !important; }
+.text-enlarged .stats-card-body { padding: 0.25rem !important; gap: 0.5rem !important; }
+.text-enlarged .stats-card-value { font-size: 1.5rem !important; line-height: 1.75rem !important; }
+.text-enlarged .stats-card-title { font-size: 0.8rem !important; }
+.text-enlarged .stats-card-subtitle { font-size: 0.625rem !important; margin-top: 0.5rem !important; }
+.text-enlarged .stats-card-icon-wrapper { padding: 0.5rem !important; }
+.text-enlarged .stats-card-icon-wrapper svg { width: 1.1rem !important; height: 1.1rem !important; }

@@ -1,0 +1,92 @@
+name: Scheduled Cron Jobs
+
+# Replaces Vercel Cron (Hobby plan only allows daily). Hits the app's cron
+# endpoints with the CRON_SECRET bearer token, on the original cadence.
+on:
+  # Scheduled triggers disabled/paused to stop cron jobs.
+  # schedule:
+  #   - cron: '0 0 * * *'      # academic-head-reminders — daily (00:00 UTC)
+  #   - cron: '30 0 * * *'     # notifications-cleanup — daily (00:30 UTC)
+  #   - cron: '45 0 * * *'     # auth-orphan-cleanup — daily (00:45 UTC)
+  #   - cron: '0 * * * *'      # oversight-expiry — hourly
+  #   - cron: '*/30 * * * *'   # booking-reminders — every 30 minutes
+  #   - cron: '*/15 * * * *'   # reschedule-offer-expiry — every 15 minutes
+  #   - cron: '*/5 * * * *'    # booking-pipeline-sweep — every 5 minutes
+  workflow_dispatch:          # manual trigger fires ALL steps (routes are idempotent)
+
+env:
+  APP_URL: https://reserve-it-six.vercel.app
+
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Academic head reminders (daily)
+        if: github.event.schedule == '0 0 * * *' || github.event_name == 'workflow_dispatch'
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sfS "$APP_URL/api/cron/academic-head-reminders" -H "Authorization: Bearer $CRON_SECRET"
+
+      - name: Notifications cleanup (daily)
+        if: github.event.schedule == '30 0 * * *' || github.event_name == 'workflow_dispatch'
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sfS "$APP_URL/api/cron/notifications-cleanup" -H "Authorization: Bearer $CRON_SECRET"
+
+      - name: Auth orphan cleanup (daily)
+        if: github.event.schedule == '45 0 * * *' || github.event_name == 'workflow_dispatch'
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sfS "$APP_URL/api/cron/auth-orphan-cleanup" -H "Authorization: Bearer $CRON_SECRET"
+
+      - name: Oversight expiry (hourly)
+        if: github.event.schedule == '0 * * * *' || github.event_name == 'workflow_dispatch'
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sfS "$APP_URL/api/cron/oversight-expiry" -H "Authorization: Bearer $CRON_SECRET"
+
+      - name: Pending-approval SLA reminders/escalation (hourly)
+        if: github.event.schedule == '0 * * * *' || github.event_name == 'workflow_dispatch'
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sfS "$APP_URL/api/cron/pending-approval-sla" -H "Authorization: Bearer $CRON_SECRET"
+
+      - name: Auto-approve stale cancellation requests (hourly)
+        if: github.event.schedule == '0 * * * *' || github.event_name == 'workflow_dispatch'
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sfS "$APP_URL/api/cron/auto-approve-cancellations" -H "Authorization: Bearer $CRON_SECRET"
+
+      - name: Booking reminders (every 30 min)
+        if: github.event.schedule == '*/30 * * * *' || github.event_name == 'workflow_dispatch'
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sfS "$APP_URL/api/cron/booking-reminders" -H "Authorization: Bearer $CRON_SECRET"
+
+      - name: Reschedule offer expiry (every 15 min)
+        if: github.event.schedule == '*/15 * * * *' || github.event_name == 'workflow_dispatch'
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sfS "$APP_URL/api/cron/reschedule-offer-expiry" -H "Authorization: Bearer $CRON_SECRET"
+
+      - name: Booking pipeline sweep (every 5 min)
+        if: github.event.schedule == '*/5 * * * *' || github.event_name == 'workflow_dispatch'
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sfS "$APP_URL/api/cron/booking-pipeline-sweep" -H "Authorization: Bearer $CRON_SECRET"
+
+      - name: Notification email outbox retry (every 15 min)
+        if: github.event.schedule == '*/15 * * * *' || github.event_name == 'workflow_dispatch'
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          curl -sfS "$APP_URL/api/cron/notification-outbox-retry" -H "Authorization: Bearer $CRON_SECRET"

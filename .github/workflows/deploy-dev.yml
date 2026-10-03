@@ -1,0 +1,83 @@
+name: Deploy — Dev
+
+on:
+  # Auto-deploy on push disabled to stop dev deployments.
+  # push:
+  #   branches: [dev]
+  #   paths-ignore:
+  #     - '**.md'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: true
+
+jobs:
+  migrate-and-deploy:
+    name: Migrate Dev DB → Deploy to Vercel Preview
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # ── 1. Migrate dev DB first (schema before code) ──────────────────────
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Run migrations on Dev DB
+        run: |
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+          supabase db push --include-all
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      # ── 2. Deploy to Vercel preview environment ────────────────────────────
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel env (preview)
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Build project
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          NODE_OPTIONS: "--max-old-space-size=4096"
+
+      - name: Deploy to Vercel preview
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --yes)
+          echo "preview_url=$url" >> $GITHUB_OUTPUT
+          vercel alias set "$url" reserve-it-dev.vercel.app --token=${{ secrets.VERCEL_TOKEN }} --yes
+          echo "Dev URL: https://reserve-it-dev.vercel.app" >> $GITHUB_STEP_SUMMARY
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          NODE_OPTIONS: "--max-old-space-size=4096"
+
+      - name: Post preview URL to summary
+        run: echo "### Preview URL" >> $GITHUB_STEP_SUMMARY && echo "${{ steps.deploy.outputs.preview_url }}" >> $GITHUB_STEP_SUMMARY
+
+      # Smoke test intentionally omitted on dev: Vercel Deployment Protection
+      # (SSO) on the preview alias returns 401 before reaching the route, so
+      # any curl-based check requires a VERCEL_AUTOMATION_BYPASS_SECRET. The
+      # prod deploy workflow runs the real smoke test against the public URL.
