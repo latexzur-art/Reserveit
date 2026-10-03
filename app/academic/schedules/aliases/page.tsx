@@ -37,7 +37,6 @@ interface FacilityAlias {
 }
 
 export default function FacilityAliasesPage() {
-    const supabase = createClient()
     const [aliases, setAliases] = useState<FacilityAlias[]>([])
     const [facilities, setFacilities] = useState<{ id: string; name: string; room_number: string }[]>([])
     const [loading, setLoading] = useState(true)
@@ -50,6 +49,7 @@ export default function FacilityAliasesPage() {
 
     const fetchAliases = useCallback(async () => {
         setLoading(true)
+        const supabase = createClient()
         const { data } = await supabase
             .from('facility_aliases')
             .select('id, facility_id, alias, alias_normalized, is_primary, facilities(name, room_number)')
@@ -74,7 +74,7 @@ export default function FacilityAliasesPage() {
         setFacilities(facs ?? [])
 
         setLoading(false)
-    }, [supabase])
+    }, [])
 
     useEffect(() => { fetchAliases() }, [fetchAliases])
 
@@ -96,6 +96,7 @@ export default function FacilityAliasesPage() {
         if (!newAlias.trim() || !selectedFacility) return
         setAdding(true)
 
+        const supabase = createClient()
         const { error } = await supabase
             .from('facility_aliases')
             .insert({
@@ -117,6 +118,7 @@ export default function FacilityAliasesPage() {
     }
 
     const handleDelete = async (aliasId: string) => {
+        const supabase = createClient()
         const { error } = await supabase
             .from('facility_aliases')
             .delete()
